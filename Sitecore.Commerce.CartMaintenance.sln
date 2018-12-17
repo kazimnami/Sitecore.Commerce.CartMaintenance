@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{F89FF17F-5268-4F3E-97DA-E224974F4226}"
 	ProjectSection(SolutionItems) = preProject
 		nuget.config = nuget.config
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Feature", "Feature", "{872AD8A1-5DB8-4900-9733-5E0D1AD9C83B}"
@@ -17,6 +18,20 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Carts", "Carts", "{98E49370-6C53-4A4F-9B66-AF3992A64DEE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Feature.Carts.Engine", "src\Feature\Carts\Engine\Feature.Carts.Engine.csproj", "{331A2451-D6B1-4268-8EA3-261AD98D9593}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Habitat", "Habitat", "{D4866570-04FB-4369-A795-A6C680F2E4ED}"
+	ProjectSection(SolutionItems) = preProject
+		src\Project\Habitat\Engine\config.json = src\Project\Habitat\Engine\config.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wwwroot", "wwwroot", "{EAD70D06-8CCA-4E45-B0E5-9F9A61FBBD4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{3E188B88-DED0-412C-BC9E-F3DCBDF698A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{93F82EBD-8849-41FF-ADC3-6B277425AB96}"
+	ProjectSection(SolutionItems) = preProject
+		src\Project\Habitat\Engine\wwwroot\data\Environments\TestMinion.json = src\Project\Habitat\Engine\wwwroot\data\Environments\TestMinion.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +50,10 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{98E49370-6C53-4A4F-9B66-AF3992A64DEE} = {872AD8A1-5DB8-4900-9733-5E0D1AD9C83B}
 		{331A2451-D6B1-4268-8EA3-261AD98D9593} = {98E49370-6C53-4A4F-9B66-AF3992A64DEE}
+		{D4866570-04FB-4369-A795-A6C680F2E4ED} = {452B6465-0AD7-45C5-8144-6643F21B85E6}
+		{EAD70D06-8CCA-4E45-B0E5-9F9A61FBBD4B} = {D4866570-04FB-4369-A795-A6C680F2E4ED}
+		{3E188B88-DED0-412C-BC9E-F3DCBDF698A9} = {EAD70D06-8CCA-4E45-B0E5-9F9A61FBBD4B}
+		{93F82EBD-8849-41FF-ADC3-6B277425AB96} = {3E188B88-DED0-412C-BC9E-F3DCBDF698A9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C18592B4-0F80-4C8E-95B6-1BD5601F6442}

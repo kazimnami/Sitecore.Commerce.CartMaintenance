@@ -1,28 +1,24 @@
-﻿using System;
-using Sitecore.Commerce.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Sitecore.Framework.Pipelines;
-using System.Threading.Tasks;
-using System.Threading;
+using Sitecore.Commerce.Core;
 using Sitecore.Commerce.Plugin.Carts;
-using System.Collections.Generic;
+using Sitecore.Framework.Pipelines;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Feature.Carts.Engine
 {
     public class CartsCleanupMinion : Minion
     {
-        //protected ICartsCleanupMinionPipeline MinionPipeline { get; set; }
-        protected IRemoveListEntitiesPipeline RemoveListEntitiesPipeline { get; set; }
-        protected IDeleteEntityPipeline DeleteEntityPipeline { get; set; }
+        private CommerceCommander CommerceCommander { get; set; }
+        private DateTimeOffset StartDateTime { get; set; }
 
         public override void Initialize(IServiceProvider serviceProvider, ILogger logger, MinionPolicy policy, CommerceEnvironment environment, CommerceContext globalContext)
         {
             base.Initialize(serviceProvider, logger, policy, environment, globalContext);
-            //this.MinionPipeline = serviceProvider.GetService<ICartsCleanupMinionPipeline>();
-            this.RemoveListEntitiesPipeline = serviceProvider.GetService<IRemoveListEntitiesPipeline>();
-            this.DeleteEntityPipeline = serviceProvider.GetService<IDeleteEntityPipeline>();
+            CommerceCommander = serviceProvider.GetService<CommerceCommander>();
+            StartDateTime = DateTime.Now;
         }
 
         public override async Task<MinionRunResultsModel> Run()
@@ -32,49 +28,67 @@ namespace Feature.Carts.Engine
 
             var maintenancePolicy = minion.MinionContext.GetPolicy<GlobalCartsMaintenancePolicy>();
 
-            // Potentially introduce a wait for an hour of the day.
+            //if (maintenancePolicy.GetAllowedDailyEndTime() <= maintenancePolicy.GetAllowedDailyStartTime())
+            //{
+            //    minion.Logger.LogError($"{minion.Name} - Invalid allowed execution times, "
+            //        + $"{nameof(maintenancePolicy.AllowedDailyEndTime)} '{maintenancePolicy.AllowedDailyEndTime}' must be greater than"
+            //        + $"{nameof(maintenancePolicy.AllowedDailyStartTime)} '{maintenancePolicy.AllowedDailyStartTime}'.");
+            //    return new MinionRunResultsModel();
+            //}
 
-            long listCount = await minion.GetListCount(minion.Policy.ListToWatch);
-            minion.Logger.LogInformation($"{minion.Name} - Review List {minion.Policy.ListToWatch} - Has Count {listCount}");
+            //var allowedStart = StartDateTime.Date + maintenancePolicy.GetAllowedDailyStartTime();
+            //var allowedEnd = StartDateTime.Date + maintenancePolicy.GetAllowedDailyEndTime();
+            //if (DateTime.Now < allowedStart || DateTime.Now < allowedEnd)
+            //{
+            //    minion.Logger.LogInformation($"{minion.Name} - Skipping execution due to current system time '{DateTime.Now}' being outside of allowed execution window between '{maintenancePolicy.AllowedDailyStartTime}' and '{maintenancePolicy.AllowedDailyEndTime}'.");
+            //    return new MinionRunResultsModel();
+            //}
 
-            for (int listIndex = 0; listCount >= listIndex; listIndex += minion.Policy.ItemsPerBatch)
-            {
-                // TEST when happens when batch and fetch numbers are out of bounds.
-                var cartList = await minion.GetListItems<Cart>(minion.Policy.ListToWatch, minion.Policy.ItemsPerBatch, listIndex);
-                if (cartList == null || cartList.Count().Equals(0))
-                {
-                    break;
-                }
+            //long listCount = await minion.GetListCount(minion.Policy.ListToWatch);
+            //minion.Logger.LogInformation($"{minion.Name} - Review List {minion.Policy.ListToWatch} - Has Count {listCount}");
 
-                foreach (var cart in (cartList))
-                {
-                    minion.Logger.LogDebug($"{minion.Name} - Checking: CartId={cart.Id}");
+            //for (int listIndex = 0; listCount >= listIndex; listIndex += minion.Policy.ItemsPerBatch)
+            //{
+            //    var cartList = await minion.GetListItems<Cart>(minion.Policy.ListToWatch, minion.Policy.ItemsPerBatch, listIndex);
+            //    if (cartList == null || cartList.Count().Equals(0))
+            //    {
+            //        break;
+            //    }
 
-                    var cartAge = cart.DateUpdated.HasValue ? cart.DateUpdated.Value.Subtract(DateTimeOffset.UtcNow).TotalDays : maintenancePolicy.DaysToRetainCarts;
+            //    foreach (var cart in (cartList))
+            //    {
+            //        if (DateTime.Now < allowedStart || DateTime.Now < allowedEnd)
+            //        {
+            //            minion.Logger.LogInformation($"{minion.Name} - Skipping execution due to current system time '{DateTime.Now.TimeOfDay}' being outside of allowed execution window between '{maintenancePolicy.AllowedDailyStartTime}' and '{maintenancePolicy.AllowedDailyEndTime}'.");
+            //            return new MinionRunResultsModel();
+            //        }
 
-                    if (cartAge < maintenancePolicy.DaysToRetainCarts)
-                    {
-                        minion.Logger.LogDebug($"{minion.Name} - Ignoring cart {cart.Id} not yet {maintenancePolicy.DaysToRetainCarts} days old, only {cartAge} days old.");
-                    }
-                    else
-                    {
-                        minion.Logger.LogInformation($"{minion.Name} - Deleting cart {cart.Id} as it's {cartAge} day old and over the retention period of {maintenancePolicy.DaysToRetainCarts} days");
-                        // TEST if this list removal is required.
-                        await RemoveListEntitiesPipeline.Run(new ListEntitiesArgument(new List<string> { cart.Id }, minion.Policy.ListToWatch), GetPipelineExecutionContextOptions(minion));
-                        await DeleteEntityPipeline.Run(new DeleteEntityArgument(cart.Id), GetPipelineExecutionContextOptions(minion));
-                    }
-                }
-            }
+            //        minion.Logger.LogDebug($"{minion.Name} - Checking: CartId={cart.Id}");
+
+            //        double cartAge = maintenancePolicy.DaysToRetainCarts;
+            //        if (!cart.DateUpdated.HasValue)
+            //        {
+            //            minion.Logger.LogDebug($"{minion.Name} - Cart {cart.Id} does not have a last update date which isn't expected.");
+            //        }
+            //        else
+            //        {
+            //            cartAge = DateTimeOffset.UtcNow.Subtract(cart.DateUpdated.Value).TotalDays;
+            //        }
+
+            //        if (cartAge < maintenancePolicy.DaysToRetainCarts)
+            //        {
+            //            minion.Logger.LogDebug($"{minion.Name} - Ignoring cart {cart.Id} not yet {maintenancePolicy.DaysToRetainCarts} days old, only {cartAge} days old.");
+            //        }
+            //        else
+            //        {
+            //            minion.Logger.LogInformation($"{minion.Name} - Deleting cart {cart.Id} as it's {cartAge} day old and over the retention period of {maintenancePolicy.DaysToRetainCarts} days");
+
+            //            await minion.CommerceCommander.DeleteEntity(minion.GlobalContext, cart.Id);
+            //        }
+            //    }
+            //}
 
             return new MinionRunResultsModel();
-        }
-
-        private static IPipelineExecutionContextOptions GetPipelineExecutionContextOptions(CartsCleanupMinion minion)
-        {
-            return new CommercePipelineExecutionContextOptions(new CommerceContext(minion.Logger, minion.MinionContext.TelemetryClient, null)
-            {
-                Environment = minion.Environment
-            }, null, null, null, null, null);
         }
     }
 }
