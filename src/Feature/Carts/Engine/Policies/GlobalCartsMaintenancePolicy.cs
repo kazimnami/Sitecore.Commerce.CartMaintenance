@@ -9,16 +9,13 @@ namespace Feature.Carts.Engine
         public GlobalCartsMaintenancePolicy()
         {
             DaysToRetainCarts = 30;
-
-            //AllowedSchedule = new List<Schedule>()
-            //{
-            //    new Schedule { StartTime = "23:00:00", EndTime = "1.01:00:00" }
-            //};
+            StopOverrun = false;
         }
 
         public int DaysToRetainCarts { get; set; }
+        public bool StopOverrun { get; set; }
 
-        public List<Schedule> AllowedSchedule { get; set; }
+        public List<Schedule> AllowedSchedules { get; set; }
     }
 
     public class Schedule

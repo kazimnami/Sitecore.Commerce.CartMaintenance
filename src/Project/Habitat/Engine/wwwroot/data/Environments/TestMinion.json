@@ -136,11 +136,30 @@
       },
       {
         "$type": "Sitecore.Commerce.Core.MinionPolicy, Sitecore.Commerce.Core",
-        "WakeupInterval": "00:00:01",
-        "ListToWatch": "CompletedOrders",
+        "WakeupInterval": "00:05:00",
+        "ListToWatch": "Carts",
         "FullyQualifiedName": "Feature.Carts.Engine.CartsCleanupMinion, Feature.Carts.Engine",
         "ItemsPerBatch": 10,
         "SleepBetweenBatches": 500
+      },
+      {
+        "$type": "Feature.Carts.Engine.GlobalCartsMaintenancePolicy, Feature.Carts.Engine",
+        "DaysToRetainCarts": "10",
+        "AllowedSchedule": {
+          "$type": "System.Collections.Generic.List`1[[Feature.Carts.Engine.Schedule, Feature.Carts.Engine]], mscorlib",
+          "$values": [
+            {
+              "$type": "Feature.Carts.Engine.Schedule, Feature.Carts.Engine",
+              "StartTime": "22:00:00",
+              "EndTime": "22:00:00"
+            },
+            {
+              "$type": "Feature.Carts.Engine.Schedule, Feature.Carts.Engine",
+              "StartTime": "23:00:00",
+              "EndTime": "23:00:00"
+            }
+          ]
+        }
       },
       {
         "$type": "Sitecore.Commerce.Core.ListNamePolicy, Sitecore.Commerce.Core",
