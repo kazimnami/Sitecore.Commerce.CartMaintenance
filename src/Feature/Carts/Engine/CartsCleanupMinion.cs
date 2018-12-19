@@ -24,22 +24,22 @@ namespace Feature.Carts.Engine
 
         private void LogInitialization(ILogger logger, MinionPolicy policy)
         {
-            var initializationLogMessage = new StringBuilder();
-            initializationLogMessage.Append($"CartsCleanupMinion settings:{System.Environment.NewLine}");
-            initializationLogMessage.AppendLine($"\t WakeupInterval = {policy.WakeupInterval}");
-            initializationLogMessage.AppendLine($"\t ListToWatch = {policy.ListToWatch}");
-            initializationLogMessage.AppendLine($"\t ItemsPerBatch {policy.ItemsPerBatch}");
-            initializationLogMessage.AppendLine($"\t SleepBetweenBatches {policy.SleepBetweenBatches}");
-            initializationLogMessage.AppendLine($"\t DaysToRetainCarts = {maintenancePolicy.DaysToRetainCarts}");
-            initializationLogMessage.AppendLine($"\t StopOverrun = {maintenancePolicy.StopOverrun}");
-            initializationLogMessage.AppendLine($"\t AllowedSchedules:");
+            var log = new StringBuilder();
+            log.Append($"CartsCleanupMinion settings:{System.Environment.NewLine}");
+            log.AppendLine($"\t WakeupInterval = {policy.WakeupInterval}");
+            log.AppendLine($"\t ListToWatch = {policy.ListToWatch}");
+            log.AppendLine($"\t ItemsPerBatch {policy.ItemsPerBatch}");
+            log.AppendLine($"\t SleepBetweenBatches {policy.SleepBetweenBatches}");
+            log.AppendLine($"\t DaysToRetainCarts = {maintenancePolicy.DaysToRetainCarts}");
+            log.AppendLine($"\t StopOverrun = {maintenancePolicy.StopOverrun}");
+            log.AppendLine($"\t AllowedSchedules:");
 
             for (int i = 0; i < maintenancePolicy.AllowedSchedules.Count(); i++)
             {
-                initializationLogMessage.AppendLine($"\t\t StartTime = {maintenancePolicy.AllowedSchedules[i].StartTime}, EndTime = {maintenancePolicy.AllowedSchedules[i].StartTime}");
+                log.AppendLine($"\t\t StartTime = {maintenancePolicy.AllowedSchedules[i].StartTime}, EndTime = {maintenancePolicy.AllowedSchedules[i].StartTime}");
             }
 
-            logger.LogInformation(initializationLogMessage.ToString());
+            logger.LogInformation(log.ToString());
         }
 
         private bool AllowExecution(DateTimeOffset executionDateTime)
